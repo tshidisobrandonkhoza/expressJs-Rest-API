@@ -32,7 +32,7 @@ var usersRouter = require('./routes/users');
 var leaderRouter = require('./routes/leaderRouter');
 var promoRouter = require('./routes/promoRouter');
 var dishRouter = require('./routes/dishRouter');
-const { connect } = require('http2');
+// const { connect } = require('http2');
 
 
 // view engine setup
