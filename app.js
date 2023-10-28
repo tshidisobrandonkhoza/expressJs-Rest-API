@@ -18,7 +18,7 @@ const connect = mongoose.connect(urlDb);
 
 //establish connection
 connect.then((db) => {
-  console.log(`Connected well to Server: ${db}`);
+  console.log(`Connected well to Database`);
 }, () => { console.log(err) });
 
 
@@ -32,7 +32,7 @@ var usersRouter = require('./routes/users');
 var leaderRouter = require('./routes/leaderRouter');
 var promoRouter = require('./routes/promoRouter');
 var dishRouter = require('./routes/dishRouter');
-// const { connect } = require('http2');
+ 
 
 
 // view engine setup
@@ -49,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //registering routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/dish', dishRouter);
+app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter);
 app.use('/leader', leaderRouter);
 
