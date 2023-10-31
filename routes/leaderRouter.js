@@ -2,10 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 //database connection
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
-const urlDb = "mongodb://127.0.0.1:27017/expressGenerator";
-const connect = mongoose.connect(urlDb);
+// const urlDb = "mongodb://127.0.0.1:27017/expressGenerator";
+// const connect = mongoose.connect(urlDb);
 
 //database models
 const Leader = require('../models/leader');
