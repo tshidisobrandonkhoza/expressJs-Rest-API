@@ -43,44 +43,49 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('54321-12345'));
 
 //authentication
-// function auth
-
 app.use((req, res, next) => {
 
+  console.log(req.signedCookies);
 
-  console.log(req.headers);
+  if (!req.signedCookies.user) {
 
-  var authHeader = req.headers.authorization;
-  console.log(`header ${authHeader}`);
+    var authHeader = req.headers.authorization;
 
-  if (!authHeader) {
-    console.log(`no Authorazation  `);
-    var err = new Error('You are not authenticated');
-    res.setHeader('WWW-Authenticate', 'Basic');
-    err.status = 401;
-    next(err);
+
+    if (!authHeader) { 
+      var err = new Error('You are not authenticated');
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      next(err);
+    }  
+
+    //splite where the is space into an array and take the 2nd element: toString split to get the username and password
+    var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+    var username = auth[0];
+    var password = auth[1];
+
+    if (username === 'admin' && password === 'password') {
+      res.cookie('user', 'admin', { signed: true });
+      next();
+    } else {
+      var err = new Error('You are not Authorized!');
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      return next(err);
+    }
   } else {
 
-    console.log(`Authorazation Well`);
-  }
-
-  //splite where the is space into an array and take the 2nd element: toString split to get the username and password
-  var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString().split(':');
-  var username = auth[0];
-  var password = auth[1];
-
-  if (username === 'admin' && password === 'password') {
-    next();
-  } else {
-
-    var err = new Error('You are not Authorized!');
-
-    res.setHeader('WWW-Authenticate', 'Basic');
-    err.status = 401;
-    return next(err);
+    if (req.signedCookies.user == 'admin') {
+      next();
+    } else {
+      var err = new Error('You are not Authorized!');
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status(401);
+      return next(err);
+    }
   }
 });
 
