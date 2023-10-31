@@ -32,7 +32,7 @@ var usersRouter = require('./routes/users');
 var leaderRouter = require('./routes/leaderRouter');
 var promoRouter = require('./routes/promoRouter');
 var dishRouter = require('./routes/dishRouter');
- 
+
 
 
 // view engine setup
@@ -44,6 +44,46 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+//authentication
+// function auth
+
+app.use((req, res, next) => {
+
+
+  console.log(req.headers);
+
+  var authHeader = req.headers.authorization;
+  console.log(`header ${authHeader}`);
+
+  if (!authHeader) {
+    console.log(`no Authorazation  `);
+    var err = new Error('You are not authenticated');
+    res.setHeader('WWW-Authenticate', 'Basic');
+    err.status = 401;
+    next(err);
+  } else {
+
+    console.log(`Authorazation Well`);
+  }
+
+  //splite where the is space into an array and take the 2nd element: toString split to get the username and password
+  var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString().split(':');
+  var username = auth[0];
+  var password = auth[1];
+
+  if (username === 'admin' && password === 'password') {
+    next();
+  } else {
+
+    var err = new Error('You are not Authorized!');
+
+    res.setHeader('WWW-Authenticate', 'Basic');
+    err.status = 401;
+    return next(err);
+  }
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 //registering routes
@@ -51,7 +91,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter);
-app.use('/leader', leaderRouter);
+app.use('/leaders', leaderRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

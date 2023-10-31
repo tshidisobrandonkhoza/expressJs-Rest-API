@@ -1,24 +1,29 @@
-const mongoose = reqiuire('mongoose');
-const Schema = mongoose.Schemma;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 
 const promoSchema = new Schema({
     name: {
         type: String,
         required: true,
-    }, image: {
+    }, 
+    image: {
         type: String,
         required: true,
-    }, label: {
+    }, 
+    label: {
         type: String,
         default: '',
-    }, price: {
-        type: Boolean,
+    },
+     price: {
+        type: String,
         min: 0,
-    }, featured: {
+    },
+     featured: {
         type: String,
         default: false,
-    }, description: {
+    }, 
+    description: {
         type: String,
         required: true,
     },
