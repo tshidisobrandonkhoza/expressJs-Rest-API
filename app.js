@@ -8,7 +8,8 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var logger = require('morgan');
-
+var passport = require('passport');
+var LocalStrategy = require('./strategies/localStrategy');
 
 var app = express();
 
@@ -47,6 +48,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //
 // app.use(cookieParser('54321-12345'));
+
 app.use(session({
   name: 'session-id',
   store: new FileStore(),
@@ -56,7 +58,9 @@ app.use(session({
 
 
 }));
+app.use(passport.initialize());
 
+app.use(passport.session());
 
 
 
@@ -68,26 +72,35 @@ app.use('/users', usersRouter);
 
 //authentication
 app.use((req, res, next) => {
-  if (!req.session.user) {
+  if (!req.user) {
 
     var err = new Error('You are not Authorized!');
-    res.setHeader('WWW-Authenticate', 'Basic');
     err.status = 401;
     return next(err);
 
   } else {
-    if (req.session.user === 'authenticated') {
-      next();
-
-
-    } else {
-      var err = new Error('You are not Authorized!');
-      res.setHeader('WWW-Authenticate', 'Basic');
-      err.status = 401;
-      return next(err);
-    }
-
+    next();
   }
+  // if (!req.session.user) {
+
+  //   var err = new Error('You are not Authorized!');
+  //   res.setHeader('WWW-Authenticate', 'Basic');
+  //   err.status = 401;
+  //   return next(err);
+
+  // } else {
+  //   if (req.session.user === 'authenticated') {
+  //     next();
+
+
+  //   } else {
+  //     var err = new Error('You are not Authorized!');
+  //     res.setHeader('WWW-Authenticate', 'Basic');
+  //     err.status = 401;
+  //     return next(err);
+  //   }
+
+  // }
 
 });
 
